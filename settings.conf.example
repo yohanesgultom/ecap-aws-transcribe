@@ -1,0 +1,14 @@
+[default]
+ecap_users_dir = C:\Users\Administrator\Dropbox\ECAP\ECAP_Users
+
+[aws]
+region = us-east-2
+access_key_id = AAAAAAAAAAAAAAAAAAAAAAA
+secret_access_key = SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+s3_bucket_name = ecap-transcribe
+
+[report]
+pron_transcript_score_smf_a = 0.2
+pron_transcript_score_smf_b = 0.8
+pron_words_score_smf_a = 0.2
+pron_words_score_smf_b = 0.8
