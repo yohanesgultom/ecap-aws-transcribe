@@ -14,6 +14,7 @@ import functools
 import json
 import csv
 
+
 class AmazonTranscribeJob:
     def __init__(self, config=None):        
         self.config = self.parse_config() if not config else config
@@ -25,9 +26,9 @@ class AmazonTranscribeJob:
         self.s3 = self.session.client('s3')
         self.transcribe = self.session.client('transcribe')
 
-    def parse_config(self):
-        config = configparser.ConfigParser()
-        config.read('settings.conf')
+    def parse_config(self):        
+        config = configparser.ConfigParser()        
+        config.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'settings.conf'))
         return config
 
     def slugify(self, text):
