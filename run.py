@@ -100,7 +100,7 @@ class AmazonTranscribeJob:
             job_names.append(job_name)
         return job_names
 
-    def wait_until_transcribe_jobs_completed(self, job_names, retry_wait=30, max_results=10):
+    def wait_until_transcribe_jobs_completed(self, job_names, retry_wait=5, max_results=10):
         '''
         Get list of submitted AWS Transcribe jobs filtered by shortest job name without extension
         If any of the job's status is not COMPLETED, wait for {retry_wait} seconds and repeat the process
@@ -240,6 +240,13 @@ class AmazonTranscribeJob:
         audio_files, user_subdir = self.get_latest_audio_files(user_id)
         s3_urls = self.upload_to_s3(audio_files)
         job_names = self.start_transcribe_jobs(s3_urls)
+
+        # estimate waiting time
+        max_size_mb = max([os.stat(p).st_size / 1000000.0 for n, p in audio_files.items()])
+        retry_wait = 22.0 * max_size_mb
+        logging.info(f'Biggest file size is {max_size_mb} MB. Waiting for {retry_wait} seconds before checking job status..')
+        time.sleep(retry_wait)
+
         completed_jobs = self.wait_until_transcribe_jobs_completed(job_names)
         output_files = self.download_transcribe_results(completed_jobs, user_subdir)
         users_dir = self.config['default']['ecap_users_dir']
@@ -260,8 +267,13 @@ if __name__ == '__main__':
     }
     user_id = args.user_id
     log_level = log_level_dict.get(args.log_level, logging.INFO)
-    logging.basicConfig(level=log_level)
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
 
+    # run job
     job = AmazonTranscribeJob()
     job.start(user_id)
     logging.info('DONE')    
