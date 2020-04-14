@@ -226,6 +226,8 @@ class AmazonTranscribeJob:
         output_bucket_name = self.config['aws']['s3_bucket_name']
         res = self.transcribe.list_transcription_jobs(Status='COMPLETED')
         logging.debug(res)
+        if not res['TranscriptionJobSummaries']:
+            logging.info('No completed job found')
         for j in res['TranscriptionJobSummaries']:                
             job_name = j['TranscriptionJobName']
             logging.info(f'Deleting job and file {job_name}..')
