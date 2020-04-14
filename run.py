@@ -231,7 +231,7 @@ class AmazonTranscribeJob:
             logging.info(f'Deleting job and file {job_name}..')
             delete_job_res = self.transcribe.delete_transcription_job(TranscriptionJobName=job_name)
             deletes = {'Objects': [{'Key': job_name}, {'Key': job_name+'.json'}]}
-            delete_files_res = self.delete_objects(Bucket=output_bucket_name, Delete=deletes)
+            delete_files_res = self.s3.delete_objects(Bucket=output_bucket_name, Delete=deletes)
 
     def start(self, user_id):
         '''
